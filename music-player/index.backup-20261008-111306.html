@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KING BOT Music</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      background:
+        radial-gradient(circle at top, #303030 0%, #171717 42%, #080808 100%);
+      color: white;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 480px;
+      margin: auto;
+      padding: 22px 18px 35px;
+    }
+
+    .brand {
+      font-size: 15px;
+      font-weight: bold;
+      letter-spacing: 1px;
+      margin-bottom: 25px;
+    }
+
+    .search-title {
+      font-size: 29px;
+      font-weight: 800;
+      margin-bottom: 18px;
+    }
+
+    .player {
+      background: linear-gradient(145deg, #292929, #111111);
+      border-radius: 22px;
+      padding: 18px;
+      box-shadow: 0 15px 40px rgba(0,0,0,.45);
+      margin-bottom: 24px;
+    }
+
+    .cover {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      border-radius: 16px;
+      object-fit: cover;
+      background: #222;
+      display: block;
+    }
+
+    .song-title {
+      font-size: 22px;
+      font-weight: 800;
+      margin-top: 18px;
+    }
+
+    .artist {
+      color: #bdbdbd;
+      margin-top: 6px;
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .play {
+      width: 58px;
+      height: 58px;
+      border: 0;
+      border-radius: 50%;
+      background: white;
+      color: black;
+      font-size: 25px;
+      cursor: pointer;
+    }
+
+    .results-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .song {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      padding: 12px 10px;
+      border-radius: 14px;
+      cursor: pointer;
+      transition: background .2s;
+    }
+
+    .song:hover {
+      background: rgba(255,255,255,.08);
+    }
+
+    .song-cover {
+      width: 54px;
+      height: 54px;
+      border-radius: 8px;
+      object-fit: cover;
+      background: #252525;
+    }
+
+    .song-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .song-name {
+      font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .song-meta {
+      color: #999;
+      font-size: 13px;
+      margin-top: 4px;
+    }
+
+    .play-small {
+      font-size: 20px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="app">
+
+    <div class="brand">👑 KING BOT</div>
+
+    <div class="search-title">🎵 Cari Lagu</div>
+
+    <section class="player">
+
+      <img
+        id="cover"
+        class="cover"
+        src="https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/4e/8f/32/4e8f3270-8a2a-1f14-7b0d-4e7a8f7e6d31/cover.jpg/600x600bb.jpg"
+        alt="Cover lagu"
+      >
+
+      <div id="songTitle" class="song-title">
+        Faded
+      </div>
+
+      <div id="artist" class="artist">
+        Alan Walker
+      </div>
+
+      <div class="controls">
+        <button id="playButton" class="play">▶</button>
+      </div>
+
+      <audio id="audio"></audio>
+
+    </section>
+
+    <div class="results-title">
+      🔎 Hasil pencarian
+    </div>
+
+    <section id="songs">
+
+      <div class="song">
+        <img
+          class="song-cover"
+          src="https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/4e/8f/32/4e8f3270-8a2a-1f14-7b0d-4e7a8f7e6d31/cover.jpg/600x600bb.jpg"
+        >
+
+        <div class="song-info">
+          <div class="song-name">Faded</div>
+          <div class="song-meta">Alan Walker • 3:32</div>
+        </div>
+
+        <div class="play-small">▶</div>
+      </div>
+
+      <div class="song">
+        <img
+          class="song-cover"
+          src="https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/4e/8f/32/4e8f3270-8a2a-1f14-7b0d-4e7a8f7e6d31/cover.jpg/600x600bb.jpg"
+        >
+
+        <div class="song-info">
+          <div class="song-name">Alone</div>
+          <div class="song-meta">Alan Walker • 2:41</div>
+        </div>
+
+        <div class="play-small">▶</div>
+      </div>
+
+      <div class="song">
+        <img
+          class="song-cover"
+          src="https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/4e/8f/32/4e8f3270-8a2a-1f14-7b0d-4e7a8f7e6d31/cover.jpg/600x600bb.jpg"
+        >
+
+        <div class="song-info">
+          <div class="song-name">The Spectre</div>
+          <div class="song-meta">Alan Walker • 3:13</div>
+        </div>
+
+        <div class="play-small">▶</div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <script>
+    const audio = document.getElementById("audio");
+    const playButton = document.getElementById("playButton");
+
+    playButton.addEventListener("click", async () => {
+      if (audio.paused) {
+        await audio.play();
+        playButton.textContent = "⏸";
+      } else {
+        audio.pause();
+        playButton.textContent = "▶";
+      }
+    });
+  </script>
+
+</body>
+</html>

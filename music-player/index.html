@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KING BOT Music Player</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Trebuchet MS", "Segoe UI", Arial, sans-serif;
+  color: white;
+  background:
+    radial-gradient(circle at top, #243b55 0%, #121827 38%, #05070c 100%);
+}
+
+.container {
+  width: min(500px, 94%);
+  margin: auto;
+  padding: 25px 0 40px;
+}
+
+.brand {
+  text-align: center;
+  font-size: 14px;
+  font-weight: bold;
+  letter-spacing: 3px;
+  opacity: .8;
+  margin-bottom: 10px;
+}
+
+.title {
+  text-align: center;
+  font-size: 30px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  margin-bottom: 22px;
+  text-shadow: 0 4px 18px rgba(30,215,96,.18);
+}
+
+.title::after {
+  content: "";
+  display: block;
+  width: 52px;
+  height: 3px;
+  margin: 10px auto 0;
+  border-radius: 999px;
+  background: #1ed760;
+  box-shadow: 0 0 14px rgba(30,215,96,.45);
+}
+
+.search {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 22px;
+  padding: 5px;
+  border-radius: 17px;
+  background: rgba(255,255,255,.07);
+  border: 1px solid rgba(255,255,255,.08);
+  box-shadow: 0 10px 30px rgba(0,0,0,.18);
+}
+
+.search input {
+  flex: 1;
+  min-width: 0;
+  padding: 14px 13px;
+  border: 0;
+  outline: none;
+  border-radius: 13px;
+  background: transparent;
+  color: white;
+  font-size: 15px;
+}
+
+.search input::placeholder {
+  color: #aaa;
+}
+
+.search button {
+  border: 0;
+  border-radius: 13px;
+  padding: 0 19px;
+  background: #1ed760;
+  color: #071008;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 5px 18px rgba(30,215,96,.20);
+  transition: transform .15s ease, filter .15s ease;
+}
+
+.search button:hover {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+}
+
+.player {
+  display: none;
+  padding: 20px;
+  border-radius: 24px;
+  background: rgba(255,255,255,.09);
+  backdrop-filter: blur(15px);
+  box-shadow: 0 15px 40px rgba(0,0,0,.35);
+  margin-bottom: 20px;
+}
+
+.cover {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 18px;
+  background: #151922;
+  display: block;
+}
+
+.now-title {
+  font-size: 21px;
+  font-weight: bold;
+  margin-top: 18px;
+}
+
+.now-artist {
+  color: #aaa;
+  margin-top: 5px;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  margin-top: 18px;
+}
+
+.control-button,
+.play { width:72px !important; height:72px !important; min-width:72px !important; min-height:72px !important; width:64px; height:64px; min-width:64px; min-height:64px; display:flex; align-items:center; justify-content:center;
+  border: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.control-button {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: transparent;
+}
+
+.control-button svg {
+  width: 25px;
+  height: 25px;
+  fill: white;
+  stroke: white;
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+}
+
+.play { width:72px !important; height:72px !important; min-width:72px !important; min-height:72px !important;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: #1ed760;
+}
+
+.play svg {
+  width: 29px;
+  height: 29px;
+  fill: #071008;
+  stroke: none;
+}
+
+.status {
+  text-align: center;
+  color: #aaa;
+  font-size: 13px;
+  margin-top: 10px;
+}
+
+.results-title {
+  font-size: 17px;
+  font-weight: bold;
+  margin: 20px 5px 10px;
+}
+
+.song {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  margin-bottom: 8px;
+  border-radius: 15px;
+  background: rgba(255,255,255,.07);
+  cursor: pointer;
+}
+
+.song:hover {
+  background: rgba(255,255,255,.13);
+}
+
+.song img {
+  width: 58px;
+  height: 58px;
+  object-fit: cover;
+  border-radius: 10px;
+  background: #20242d;
+}
+
+.song-info {
+  min-width: 0;
+  flex: 1;
+}
+
+.song-name {
+  font-weight: bold;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.song-artist {
+  color: #999;
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+.empty {
+  text-align: center;
+  color: #888;
+  padding: 25px;
+}
+
+.brand-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-bottom: 10px;
+}
+
+.spotify-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  opacity: .95;
+}
+
+.brand {
+  margin: 0;
+}
+
+.spotify-mark {
+  width: 25px;
+  height: 25px;
+  flex: 0 0 25px;
+}
+
+.spotify-mark svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.spotify-mark circle {
+  fill: #1ed760;
+}
+
+.spotify-mark path {
+  fill: none;
+  stroke: #071008;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+}
+
+.spotify-note {
+  margin: 14px 4px 4px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(30,215,96,.08);
+  border: 1px solid rgba(30,215,96,.18);
+  color: #9ca3af;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.spotify-note span {
+  color: #1ed760;
+  font-weight: 700;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <div class="brand-row">
+    <div class="spotify-brand">
+      <div class="spotify-mark" aria-label="Spotify">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="11"/>
+          <path d="M6.7 9.2c3.9-1.1 7.9-.7 11.2.8"/>
+          <path d="M7.4 12.3c3.1-.8 6.2-.5 8.9.7"/>
+          <path d="M8.2 15.2c2.3-.5 4.6-.3 6.6.5"/>
+        </svg>
+      </div>
+      <span>Spotify</span>
+    </div>
+
+    <div class="brand">X KING BOT 👑</div>
+  </div>
+
+  <div class="title">🎵 CARI LAGU</div>
+
+  <div class="search">
+    <input
+      id="searchInput"
+      type="text"
+      placeholder="Cari judul atau penyanyi..."
+    >
+    <button onclick="searchSongs()">Cari</button>
+  </div>
+
+  <div class="player">
+
+    <img
+      id="cover"
+      class="cover"
+      src=""
+      alt="Cover Lagu"
+    >
+
+    <div id="nowTitle" class="now-title">
+      Pilih lagu
+    </div>
+
+    <div id="nowArtist" class="now-artist">
+      KING BOT Music Player
+    </div>
+
+    <div class="controls">
+
+      <button class="control-button" onclick="previousSong()" aria-label="Lagu sebelumnya">
+        <svg viewBox="0 0 24 24">
+          <path d="M6 5v14M19 6l-8 6 8 6V6z"/>
+        </svg>
+      </button>
+
+      <button id="playButton" class="play" onclick="togglePlay()" aria-label="Play">
+        <svg id="playIcon" viewBox="0 0 24 24">
+          <path d="M8 5v14l11-7L8 5z"/>
+        </svg>
+      </button>
+
+      <button class="control-button" onclick="nextSong()" aria-label="Lagu berikutnya">
+        <svg viewBox="0 0 24 24">
+          <path d="M18 5v14M5 6l8 6-8 6V6z"/>
+        </svg>
+      </button>
+
+    </div>
+
+    <div id="status" class="status">
+      Preview lagu
+    </div>
+
+  </div>
+
+  <div class="results-title">
+    🎵 REKOMENDASI LAGU
+  </div>
+
+  <div class="spotify-note">
+      <span>Spotify</span> tersedia sebagai layanan resmi untuk membuka lagu secara penuh.
+    </div>
+
+  <div id="results">
+    <div class="empty">
+      Cari lagu untuk menampilkan hasil
+    </div>
+  </div>
+
+  <audio id="audio"></audio>
+
+</div>
+
+<script>
+let currentSong = null;
+let currentIndex = -1;
+let songList = [];
+
+const audio = document.getElementById("audio");
+const cover = document.getElementById("cover");
+const nowTitle = document.getElementById("nowTitle");
+const nowArtist = document.getElementById("nowArtist");
+const playButton = document.getElementById("playButton");
+const statusText = document.getElementById("status");
+const results = document.getElementById("results");
+const searchInput = document.getElementById("searchInput");
+
+async function searchSongs() {
+  const query = searchInput.value.trim();
+
+  if (!query) {
+    return;
+  }
+
+  results.innerHTML = `
+    <div class="empty">
+      🔎 Mencari lagu...
+    </div>
+  `;
+
+  try {
+    const response = await fetch(
+      "/api/search?q=" + encodeURIComponent(query)
+    );
+
+    const songs = await response.json();
+
+    if (!Array.isArray(songs) || songs.length === 0) {
+      results.innerHTML = `
+        <div class="empty">
+          Lagu tidak ditemukan
+        </div>
+      `;
+      return;
+    }
+
+    songList = songs;
+    currentIndex = -1;
+
+    results.innerHTML = "";
+
+    songs.forEach(song => {
+      const item = document.createElement("div");
+      item.className = "song";
+
+      item.innerHTML = `
+        <img src="/api/artwork?url=${encodeURIComponent(song.artwork)}" alt="">
+        <div class="song-info">
+          <div class="song-name">${escapeHtml(song.title)}</div>
+          <div class="song-artist">
+            ${escapeHtml(song.artist)} • 🎧 Preview
+          </div>
+        </div>
+      `;
+
+      item.onclick = () => selectSong(song);
+
+      results.appendChild(item);
+    });
+
+  } catch (error) {
+    console.error(error);
+
+    results.innerHTML = `
+      <div class="empty">
+        ❌ Gagal mencari lagu
+      </div>
+    `;
+  }
+}
+
+function selectSong(song) {
+  document.querySelector(".player").style.display = "block";
+  currentSong = song;
+  currentIndex = songList.indexOf(song);
+
+  audio.pause();
+
+  audio.src = song.preview;
+
+  cover.src =
+    "/api/artwork?url=" + encodeURIComponent(song.artwork);
+  nowTitle.textContent = song.title;
+  nowArtist.textContent = song.artist;
+
+  playButton.innerHTML = `<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7L8 5z"/></svg>`;
+  statusText.textContent = "Siap diputar";
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+}
+
+async function togglePlay() {
+  if (!currentSong) {
+    statusText.textContent = "Pilih lagu terlebih dahulu";
+    return;
+  }
+
+  try {
+    if (audio.paused) {
+      await audio.play();
+
+      playButton.innerHTML = `
+        <svg viewBox="0 0 24 24">
+          <path d="M7 5h4v14H7zM13 5h4v14h-4z"/>
+        </svg>
+      `;
+      statusText.textContent = "Sedang diputar...";
+    } else {
+      audio.pause();
+
+      playButton.innerHTML = `
+        <svg viewBox="0 0 24 24">
+          <path d="M8 5v14l11-7L8 5z"/>
+        </svg>
+      `;
+      statusText.textContent = "Dijeda";
+    }
+  } catch (error) {
+    console.error(error);
+
+    statusText.textContent =
+      "Preview tidak dapat diputar di perangkat ini";
+  }
+}
+
+audio.addEventListener("ended", () => {
+  playButton.innerHTML = `
+    <svg viewBox="0 0 24 24">
+      <path d="M8 5v14l11-7L8 5z"/>
+    </svg>
+  `;
+  statusText.textContent = "Selesai";
+});
+
+searchInput.addEventListener("keydown", event => {
+  if (event.key === "Enter") {
+    searchSongs();
+  }
+});
+
+// Rekomendasi lagu otomatis saat halaman pertama dibuka
+async function loadRecommendations() {
+  const queries = [
+    "Faded Alan Walker",
+    "The Weeknd",
+    "Ed Sheeran",
+    "Coldplay",
+    "Imagine Dragons"
+  ];
+
+  results.innerHTML = `
+    <div class="empty">
+      🎵 Memuat rekomendasi lagu...
+    </div>
+  `;
+
+  try {
+    const collected = [];
+
+    for (const query of queries) {
+      const response = await fetch(
+        "/api/search?q=" + encodeURIComponent(query)
+      );
+
+      const songs = await response.json();
+
+      if (Array.isArray(songs) && songs.length) {
+        collected.push(songs[0]);
+      }
+    }
+
+    if (!collected.length) {
+      results.innerHTML = `
+        <div class="empty">
+          Rekomendasi lagu tidak tersedia
+        </div>
+      `;
+      return;
+    }
+
+    songList = collected;
+    currentIndex = -1;
+    results.innerHTML = "";
+
+    collected.forEach(song => {
+      const item = document.createElement("div");
+      item.className = "song";
+
+      item.innerHTML = `
+        <img src="/api/artwork?url=${encodeURIComponent(song.artwork)}" alt="">
+        <div class="song-info">
+          <div class="song-name">${escapeHtml(song.title)}</div>
+          <div class="song-artist">
+            ${escapeHtml(song.artist)} • ${song.duration}
+          </div>
+        </div>
+      `;
+
+      item.onclick = () => selectSong(song);
+      results.appendChild(item);
+    });
+  } catch (error) {
+    console.error(error);
+    results.innerHTML = `
+      <div class="empty">
+        ❌ Gagal memuat rekomendasi
+      </div>
+    `;
+  }
+}
+
+// Deep-link dari KING BOT: /?q=alan%20walker
+const urlQuery = new URLSearchParams(window.location.search).get("q");
+
+if (urlQuery && urlQuery.trim()) {
+  searchInput.value = urlQuery.trim();
+  searchSongs();
+} else {
+  loadRecommendations();
+}
+
+
+function previousSong() {
+  if (!songList.length) return;
+
+  let index = currentIndex - 1;
+
+  if (index < 0) {
+    index = songList.length - 1;
+  }
+
+  selectSong(songList[index]);
+}
+
+function nextSong() {
+  if (!songList.length) return;
+
+  let index = currentIndex + 1;
+
+  if (index >= songList.length) {
+    index = 0;
+  }
+
+  selectSong(songList[index]);
+}
+
+function escapeHtml(text) {
+  return String(text)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,9 @@
+{
+  "customerId": "customer 002",
+  "name": "Test Premium",
+  "botNumber": "639532206565",
+  "package": "premium",
+  "active": true,
+  "startDate": "2026-10-04",
+  "endDate": ""
+}

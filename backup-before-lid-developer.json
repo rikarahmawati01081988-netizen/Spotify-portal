@@ -1,0 +1,38 @@
+{
+  "securitySystem": {
+    "name": "KING SECURITY CORE",
+    "version": "1.0",
+    "mode": "intelligent-protection"
+  },
+
+  "developer": {
+    "numbers": [
+      "6288287247274"
+    ],
+    "primary": "6288287247274",
+    "protection": true,
+    "reason": "KING BOT System Developer"
+  },
+
+  "recovery": {
+    "enabled": true,
+    "key": "Developer"
+  },
+
+  "owner": {
+    "numbers": [],
+    "protection": true,
+    "reason": "KING BOT owner authority"
+  },
+
+  "trusted": {
+    "numbers": [],
+    "protection": false
+  },
+
+  "response": {
+    "developerMessage": "👑 KING SECURITY CORE\n\nAkun ini terdaftar sebagai Developer KING BOT.\n\nSistem memberikan perlindungan khusus karena akun ini memiliki akses pengelolaan, konfigurasi, dan keamanan bot.\n\nStatus: VERIFIED DEVELOPER 🔐",
+
+    "questionMessage": "👑 KING SECURITY CORE\n\nPerlindungan ini bukan berdasarkan jabatan grup, tetapi berdasarkan identitas sistem.\n\nDeveloper KING BOT memiliki akses khusus untuk menjaga stabilitas, konfigurasi, dan keamanan layanan."
+  }
+}

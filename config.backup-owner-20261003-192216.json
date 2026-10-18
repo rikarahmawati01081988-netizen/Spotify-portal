@@ -1,0 +1,8 @@
+{
+  "antiToxic": true,
+  "antiLink": true,
+  "antiSpam": true,
+  "openHour": 8,
+  "closeHour": 22,
+  "welcome": true
+}

@@ -1,0 +1,10 @@
+{
+  "package": "basic",
+  "features": {
+    "welcome": true,
+    "antiToxic": true,
+    "antiLink": false,
+    "autoFaq": false,
+    "music": false
+  }
+}

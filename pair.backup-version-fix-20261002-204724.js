@@ -1,0 +1,57 @@
+const {
+  default: makeWASocket,
+  useMultiFileAuthState,
+  fetchLatestWaWebVersion,
+  Browsers
+} = require("@whiskeysockets/baileys");
+
+const pino = require("pino");
+
+async function start() {
+  console.log("MENGAMBIL VERSI WA WEB...");
+
+  const { version } = await fetchLatestWaWebVersion();
+
+  console.log("VERSI:", version.join("."));
+
+  const { state, saveCreds } =
+    await useMultiFileAuthState("./session");
+
+  const sock = makeWASocket({
+    version,
+    browser: Browsers.macOS("Chrome"),
+    auth: state,
+    logger: pino({ level: "silent" })
+  });
+
+  sock.ev.on("creds.update", saveCreds);
+
+  sock.ev.on("connection.update", ({ connection, lastDisconnect }) => {
+    console.log("KONEKSI:", connection);
+
+    if (lastDisconnect) {
+      console.log(
+        "ERROR:",
+        JSON.stringify(lastDisconnect.error, null, 2)
+      );
+    }
+
+    if (connection === "open") {
+      console.log("BERHASIL TERHUBUNG 🟢");
+    }
+  });
+
+  await new Promise(resolve => setTimeout(resolve, 3000));
+
+  console.log("MEMINTA PAIRING CODE...");
+
+  const code = await sock.requestPairingCode("6288287247274");
+
+  console.log("================================");
+  console.log("KODE PAIRING:", code);
+  console.log("================================");
+}
+
+start().catch(err => {
+  console.error("ERROR START:", err);
+});

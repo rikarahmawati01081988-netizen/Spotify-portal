@@ -1,0 +1,25 @@
+{
+  "developer": "6288287247274",
+  "alertReceiver": "6289654510010",
+  "warningAfterHours": 3,
+  "reasonExtensionHours": 4,
+  "sleepStart": "22:00",
+  "sleepEnd": "06:00",
+  "emergencyKeywords": [
+    "hp rusak",
+    "hp hancur",
+    "hp hilang",
+    "nomor kena ban",
+    "akun kena ban",
+    "tidak bisa login",
+    "darurat"
+  ],
+  "temporaryKeywords": [
+    "sekolah",
+    "kerja",
+    "pergi",
+    "rapat",
+    "tidur",
+    "perjalanan"
+  ]
+}

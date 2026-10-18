@@ -1,0 +1,42 @@
+{
+  "fatih": {
+    "name": "Fatih",
+    "activity": "pergi main",
+    "updatedAt": "2026-10-08T13:13:27.083Z"
+  },
+  "agus": {
+    "name": "Agus",
+    "activity": "makan",
+    "updatedAt": "2026-10-06T09:54:18.876Z"
+  },
+  "pler": {
+    "name": "Pler",
+    "activity": "makan",
+    "updatedAt": "2026-10-06T10:51:57.677Z"
+  },
+  "joko": {
+    "name": "Joko",
+    "activity": "makan",
+    "updatedAt": "2026-10-06T10:52:55.273Z"
+  },
+  "fanz": {
+    "name": "fanz",
+    "activity": "stres",
+    "updatedAt": "2026-10-08T10:05:51.595Z"
+  },
+  "89082571014382": {
+    "name": "89082571014382",
+    "activity": "mudik nih",
+    "updatedAt": "2026-10-11T15:40:34.613Z"
+  },
+  "184151638577321": {
+    "name": "184151638577321",
+    "activity": "push poin mini game kamapng",
+    "updatedAt": "2026-10-11T15:49:19.758Z"
+  },
+  "136468945227867": {
+    "name": "136468945227867",
+    "activity": "pergi",
+    "updatedAt": "2026-10-12T09:28:27.684Z"
+  }
+}

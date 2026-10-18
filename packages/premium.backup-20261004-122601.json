@@ -1,0 +1,10 @@
+{
+  "package": "premium",
+  "features": {
+    "welcome": true,
+    "antiToxic": true,
+    "antiLink": true,
+    "autoFaq": true,
+    "music": true
+  }
+}

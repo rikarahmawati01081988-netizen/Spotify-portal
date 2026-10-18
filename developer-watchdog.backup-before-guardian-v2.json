@@ -1,0 +1,8 @@
+{
+  "developer": "6288287247274",
+  "backupAlert": "6289654510010",
+  "warningHour": 9,
+  "sleepStart": "22:00",
+  "sleepEnd": "06:00",
+  "warningAfterHours": 3
+}

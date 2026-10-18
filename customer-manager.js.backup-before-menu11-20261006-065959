@@ -1,0 +1,515 @@
+const fs = require("fs");
+const readline = require("readline");
+const {
+  default: makeWASocket,
+  useMultiFileAuthState,
+  fetchLatestWaWebVersion,
+  Browsers
+} = require("@whiskeysockets/baileys");
+const pino = require("pino");
+
+const CUSTOMER_DIR = "./customers";
+const SESSION_DIR = "./customer-sessions";
+
+function getCustomer(id) {
+  const file = `${CUSTOMER_DIR}/${id}.json`;
+
+  if (!fs.existsSync(file)) {
+    return null;
+  }
+
+  return JSON.parse(fs.readFileSync(file, "utf8"));
+}
+
+function saveCustomer(customer) {
+  const file = `${CUSTOMER_DIR}/${customer.customerId}.json`;
+
+  fs.copyFileSync(
+    file,
+    `${file}.backup-${new Date().toISOString().replace(/[:.]/g, "-")}`
+  );
+
+  fs.writeFileSync(
+    file,
+    JSON.stringify(customer, null, 2)
+  );
+}
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
+
+console.log(`
+╔══════════════════════════╗
+║     👑 KING BOT MANAGER  ║
+╚══════════════════════════╝
+
+1. Lihat customer
+2. Ganti paket
+3. Ganti nomor bot
+4. Aktifkan customer
+5. Nonaktifkan customer
+6. Keluar
+7. Tambah customer
+8. Hubungkan WhatsApp
+9. Reset session customer
+10. Atur masa aktif
+`);
+
+rl.question("Pilih menu: ", choice => {
+  if (choice === "6") {
+    rl.close();
+    return;
+  }
+
+  if (choice === "7") {
+    rl.question("ID customer baru: ", id => {
+      rl.question("Nama customer: ", name => {
+        rl.question("Nomor bot: ", botNumber => {
+          rl.question("Paket (basic/premium): ", pkg => {
+
+            if (pkg !== "basic" && pkg !== "premium") {
+              console.log("❌ Paket harus basic atau premium.");
+              rl.close();
+              return;
+            }
+
+            const file = `${CUSTOMER_DIR}/${id}.json`;
+
+            if (fs.existsSync(file)) {
+              console.log("❌ Customer tersebut sudah ada.");
+              rl.close();
+              return;
+            }
+
+            const customer = {
+              customerId: id.trim(),
+              name: name.trim(),
+              botNumber: botNumber.trim(),
+              package: pkg,
+              active: true,
+              startDate: new Date().toISOString().slice(0, 10),
+              endDate: ""
+            };
+
+            fs.writeFileSync(
+              file,
+              JSON.stringify(customer, null, 2)
+            );
+
+            console.log(`✅ Customer ${id} berhasil dibuat.`);
+            console.log(`📦 Paket: ${pkg.toUpperCase()}`);
+            console.log(`📱 Nomor: ${botNumber}`);
+
+            rl.close();
+          });
+        });
+      });
+    });
+    return;
+  }
+
+  if (choice === "9") {
+    rl.question("ID customer: ", id => {
+      const customer = getCustomer(id);
+
+      if (!customer) {
+        console.log("❌ Customer tidak ditemukan.");
+        rl.close();
+        return;
+      }
+
+      const sessionPath =
+        `${SESSION_DIR}/${customer.customerId}`;
+
+      if (!fs.existsSync(sessionPath)) {
+        console.log("ℹ️ Session customer belum ada.");
+        rl.close();
+        return;
+      }
+
+      const backupPath =
+        `${sessionPath}.backup-manual-reset-${new Date()
+          .toISOString()
+          .replace(/[:.]/g, "-")}`;
+
+      try {
+        fs.cpSync(
+          sessionPath,
+          backupPath,
+          { recursive: true }
+        );
+
+        fs.rmSync(
+          sessionPath,
+          { recursive: true, force: true }
+        );
+
+        fs.mkdirSync(
+          sessionPath,
+          { recursive: true }
+        );
+
+        console.log("💾 Session lama diamankan:");
+        console.log(backupPath);
+        console.log("♻️ Session berhasil di-reset secara manual.");
+        console.log("➡️ Jalankan Menu 8 untuk pairing ulang.");
+      } catch (error) {
+        console.log(
+          "❌ GAGAL RESET SESSION:",
+          error.message
+        );
+      }
+
+      rl.close();
+    });
+    return;
+  }
+
+  if (choice === "10") {
+    rl.question("ID customer: ", id => {
+      const customer = getCustomer(id);
+
+      if (!customer) {
+        console.log("❌ Customer tidak ditemukan.");
+        rl.close();
+        return;
+      }
+
+      rl.question("Tanggal berakhir (YYYY-MM-DD, kosong = tanpa batas): ", date => {
+        if (date.trim() !== "" && !/^\\d{4}-\\d{2}-\\d{2}$/.test(date.trim())) {
+          console.log("❌ Format harus YYYY-MM-DD.");
+          rl.close();
+          return;
+        }
+
+        customer.endDate = date.trim();
+        saveCustomer(customer);
+
+        console.log(
+          customer.endDate
+            ? `✅ Masa aktif sampai: ${customer.endDate}`
+            : "♾️ Masa aktif tanpa batas."
+        );
+
+        rl.close();
+      });
+    });
+    return;
+  }
+
+  if (choice === "8") {
+    rl.question("ID customer: ", async id => {
+      const customer = getCustomer(id);
+
+      if (!customer) {
+        console.log("❌ Customer tidak ditemukan.");
+        rl.close();
+        return;
+      }
+
+      if (!customer.botNumber) {
+        console.log("❌ Nomor bot belum tersedia.");
+        rl.close();
+        return;
+      }
+
+      const phoneNumber = customer.botNumber.replace(/\D/g, "");
+
+      if (phoneNumber.length < 10) {
+        console.log("❌ Nomor bot tidak valid.");
+        rl.close();
+        return;
+      }
+
+      try {
+        fs.mkdirSync(SESSION_DIR, { recursive: true });
+
+        const sessionPath =
+          `${SESSION_DIR}/${customer.customerId}`;
+
+        console.log("\nMENGAMBIL VERSI WA WEB...");
+
+        const { version } =
+          await fetchLatestWaWebVersion();
+
+        console.log(
+          "VERSI:",
+          version.join(".")
+        );
+
+        const { state, saveCreds } =
+          await useMultiFileAuthState(sessionPath);
+
+        const sock = makeWASocket({
+          version,
+          browser: Browsers.macOS("Chrome"),
+          auth: state,
+          logger: pino({ level: "silent" })
+        });
+
+        sock.ev.on("creds.update", saveCreds);
+
+        sock.ev.on("messages.upsert", ({ messages }) => {
+          for (const msg of messages) {
+            if (msg?.message) {
+              console.log("📩 PESAN MASUK:", msg.key?.remoteJid || "unknown");
+            }
+          }
+        });
+
+        let pairingRequested = false;
+        let sessionReset = false;
+
+        sock.ev.on(
+          "connection.update",
+          async ({ connection, lastDisconnect }) => {
+
+            console.log("KONEKSI:", connection);
+
+            const statusCode =
+              lastDisconnect?.error?.output?.statusCode;
+
+            if (statusCode === 401 && !sessionReset) {
+              sessionReset = true;
+
+              console.log(
+                "\n⚠️ SESSION CUSTOMER TIDAK VALID (401)."
+              );
+              console.log(
+                "🔐 SESSION TIDAK DIHAPUS OTOMATIS."
+              );
+              console.log(
+                "ℹ️ Reset session hanya dilakukan secara manual."
+              );
+
+              return;
+            }
+
+            if (
+              connection === "connecting" &&
+              !pairingRequested &&
+              !state.creds.registered
+            ) {
+              pairingRequested = true;
+
+              try {
+                console.log(
+                  "MENUNGGU KONEKSI WA..."
+                );
+
+                await new Promise(resolve =>
+                  setTimeout(resolve, 1500)
+                );
+
+                if (state.creds.registered) {
+                  console.log(
+                    "SESSION SUDAH TERDAFTAR."
+                  );
+                  return;
+                }
+
+                console.log(
+                  "MEMINTA PAIRING CODE..."
+                );
+
+                const code =
+                  await sock.requestPairingCode(
+                    phoneNumber
+                  );
+
+                console.log(
+                  "\n================================"
+                );
+                console.log(
+                  "🔐 KODE PAIRING:",
+                  code
+                );
+                console.log(
+                  "================================"
+                );
+                console.log(
+                  `👤 Customer: ${customer.customerId}`
+                );
+                console.log(
+                  `📱 Nomor: ${customer.botNumber}`
+                );
+                console.log(
+                  "\nMasukkan kode tersebut di WhatsApp."
+                );
+              } catch (error) {
+                console.log(
+                  "ERROR PAIRING:",
+                  error.message
+                );
+              }
+            }
+
+            if (statusCode === 515) {
+              console.log(
+                "🔄 515 TERDETEKSI — SESSION BARU, MENYAMBUNG ULANG..."
+              );
+
+              setTimeout(async () => {
+                try {
+                  const { state: newState, saveCreds: newSaveCreds } =
+                    await useMultiFileAuthState(sessionPath);
+
+                  const newSock = makeWASocket({
+                    version,
+                    browser: Browsers.macOS("Chrome"),
+                    auth: newState,
+                    logger: pino({ level: "silent" })
+                  });
+
+                  newSock.ev.on(
+                    "creds.update",
+                    newSaveCreds
+                  );
+
+                  newSock.ev.on(
+                    "connection.update",
+                    ({ connection, lastDisconnect }) => {
+                      console.log(
+                        "RECONNECT:",
+                        connection
+                      );
+
+                      if (connection === "open") {
+                        console.log(
+                          "BERHASIL TERHUBUNG 🟢"
+                        );
+                      }
+
+                      if (lastDisconnect) {
+                        console.log(
+                          "RECONNECT ERROR:",
+                          JSON.stringify(
+                            lastDisconnect.error,
+                            null,
+                            2
+                          )
+                        );
+                      }
+                    }
+                  );
+                } catch (error) {
+                  console.log(
+                    "❌ GAGAL RECONNECT:",
+                    error.message
+                  );
+                }
+              }, 1500);
+
+              return;
+            }
+
+            if (
+              statusCode &&
+              statusCode !== 401
+            ) {
+              console.log(
+                "ERROR:",
+                JSON.stringify(
+                  lastDisconnect.error,
+                  null,
+                  2
+                )
+              );
+            }
+
+            if (connection === "open") {
+              console.log(
+                "BERHASIL TERHUBUNG 🟢"
+              );
+            }
+          }
+        );
+
+      } catch (error) {
+        console.log(
+          "❌ GAGAL MEMULAI PAIRING:",
+          error.message
+        );
+        rl.close();
+      }
+    });
+
+    return;
+  }
+
+  rl.question("ID customer: ", id => {
+    const customer = getCustomer(id);
+
+    if (!customer) {
+      console.log("❌ Customer tidak ditemukan.");
+      rl.close();
+      return;
+    }
+
+    if (choice === "1") {
+      console.log("\n👤 CUSTOMER");
+      console.log("ID          :", customer.customerId);
+      console.log("NAMA        :", customer.name || "-");
+      console.log("PAKET       :", (customer.package || "-").toUpperCase());
+      console.log(
+        "SM ACCESS   :",
+        customer.package === "premium"
+          ? "🟢 PREMIUM — SEMUA FITUR"
+          : "🟡 BASIC — FITUR TERBATAS"
+      );
+      console.log("NOMOR BOT   :", customer.botNumber || "BELUM ADA");
+      console.log("STATUS      :", customer.active ? "🟢 AKTIF" : "🔴 NONAKTIF");
+      console.log("MULAI       :", customer.startDate || "-");
+      console.log("MASA AKTIF  :", customer.endDate || "♾️ TANPA BATAS");
+      rl.close();
+      return;
+    }
+
+    if (choice === "2") {
+      rl.question("Paket (basic/premium): ", pkg => {
+        if (pkg !== "basic" && pkg !== "premium") {
+          console.log("❌ Paket harus basic atau premium.");
+          rl.close();
+          return;
+        }
+
+        customer.package = pkg;
+        saveCustomer(customer);
+
+        console.log(`✅ Paket ${id} sekarang ${pkg.toUpperCase()}`);
+        rl.close();
+      });
+      return;
+    }
+
+    if (choice === "3") {
+      rl.question("Nomor bot baru: ", number => {
+        customer.botNumber = number.trim();
+        saveCustomer(customer);
+
+        console.log("✅ Nomor bot berhasil disimpan.");
+        rl.close();
+      });
+      return;
+    }
+
+    if (choice === "4" || choice === "5") {
+      customer.active = choice === "4";
+      saveCustomer(customer);
+
+      console.log(
+        customer.active
+          ? "🟢 Customer diaktifkan."
+          : "🔴 Customer dinonaktifkan."
+      );
+
+      rl.close();
+      return;
+    }
+
+    console.log("❌ Menu tidak dikenal.");
+    rl.close();
+  });
+});

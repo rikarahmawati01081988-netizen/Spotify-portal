@@ -1,0 +1,8 @@
+{
+  "customerId": "customer-001",
+  "name": "Demo Customer",
+  "package": "basic",
+  "active": true,
+  "startDate": "2026-10-04",
+  "endDate": "2026-11-04"
+}
