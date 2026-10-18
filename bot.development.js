@@ -450,7 +450,7 @@ async function checkDeveloperOffline(sock) {
     !memory.lastAlert
   ){
 
-    await sock.sendMessage(
+    sock.sendMessage(
       config.alertReceiver+"@s.whatsapp.net",
       {
         text:
@@ -837,7 +837,7 @@ sock.ev.on("presence.update", async ({ id, presences }) => {
       group.members[participantJid].updatedAt = Date.now();
 
       if (search?.requesterJid) {
-        await sock.sendMessage(id, {
+        sock.sendMessage(id, {
           text: `╭━━━『 🟢 MEMBER RETURN 』
 ┃
 ┃ 👤 Nama:
@@ -871,7 +871,7 @@ sock.ev.on("presence.update", async ({ id, presences }) => {
   }
 });
 
-sock.ev.on("messages.upsert", async ({ messages, type }) => {
+sock.ev.on('messages.upsert', async ({ messages, type }) => {
     if (type !== "notify") return;
 
     for (const msg of messages) {
@@ -911,7 +911,7 @@ sock.ev.on("messages.upsert", async ({ messages, type }) => {
               memory.nextCheck
             ) {
 
-              await sock.sendMessage(jid, {
+              sock.sendMessage(jid, {
                 text:
 `👑 CREATOR KEMBALI ONLINE
 
@@ -1025,7 +1025,7 @@ Monitoring telah di-reset.
                 JSON.stringify(memory,null,2)
               );
 
-              await sock.sendMessage(jid,{
+              sock.sendMessage(jid,{
                 text:
 `👑 KING BOT MEMORY UPDATE
 
@@ -1084,7 +1084,7 @@ result.waitingForever
             text.toLowerCase().includes(word)
           )
         ) {
-          await sock.sendMessage(jid, {
+          sock.sendMessage(jid, {
             text:
               "🛡️ DEVELOPER PROTECTOR\n\n" +
               "🔐 Identity Protection System aktif\\n\\n" +
@@ -1181,7 +1181,7 @@ result.waitingForever
           JSON.stringify(memory,null,2)
         );
 
-        await sock.sendMessage(jid,{
+        sock.sendMessage(jid,{
           text:
 `👑 KING BOT MEMORY UPDATE
 
@@ -1221,7 +1221,7 @@ Robot penjaga ciptaan Creator`
 
         if(password !== switchConfig.switchPassword){
 
-          await sock.sendMessage(jid,{
+          sock.sendMessage(jid,{
             text:
 `🔐 KING SECURITY
 
@@ -1262,7 +1262,7 @@ Akses ditolak.`
         );
 
 
-        await sock.sendMessage(jid,{
+        sock.sendMessage(jid,{
           text:
 `👑 KING DEVELOPER SWITCH
 
@@ -1284,7 +1284,7 @@ Tetap menjaga sistem Creator.`
       const markCommandDone = async () => {
         if (!isBotCommand) return;
         try {
-          await sock.sendMessage(jid, {
+          sock.sendMessage(jid, {
             react: {
               text: "✅",
               key: msg.key
@@ -1296,7 +1296,7 @@ Tetap menjaga sistem Creator.`
       };
 
       if (isBotCommand) {
-        await sock.sendMessage(jid, {
+        sock.sendMessage(jid, {
           react: {
             text: "⌛",
             key: msg.key
@@ -1323,7 +1323,7 @@ Tetap menjaga sistem Creator.`
         const senderRole = getSecurityRole(sender);
 
         if (senderRole !== "developer") {
-          await sock.sendMessage(jid, {
+          sock.sendMessage(jid, {
             text:
               "╭━━━『 👑 KING SECURITY CORE 』\n" +
               "┃\n" +
@@ -1344,7 +1344,7 @@ Tetap menjaga sistem Creator.`
             .replace(/\D/g, "");
 
           if (!target) {
-            await sock.sendMessage(jid, {
+            sock.sendMessage(jid, {
               text: "Format:\n!security transfer nomor"
             });
             await markCommandDone();
@@ -1362,7 +1362,7 @@ Tetap menjaga sistem Creator.`
             JSON.stringify(transferData, null, 2)
           );
 
-          await sock.sendMessage(jid, {
+          sock.sendMessage(jid, {
             text:
               "╭━━━『 👑 KING SECURITY CORE 』\n" +
               "┃\n" +
@@ -1382,7 +1382,7 @@ Tetap menjaga sistem Creator.`
 
         if (commandText === "!security approve") {
           if (!transferData.target) {
-            await sock.sendMessage(jid, {
+            sock.sendMessage(jid, {
               text: "Tidak ada transfer pending."
             });
             await markCommandDone();
@@ -1391,14 +1391,14 @@ Tetap menjaga sistem Creator.`
 
           if (Date.now() > transferData.expires) {
             fs.unlinkSync(transferFile);
-            await sock.sendMessage(jid, {
+            sock.sendMessage(jid, {
               text: "Transfer expired."
             });
             await markCommandDone();
             continue;
           }
 
-          await sock.sendMessage(jid, {
+          sock.sendMessage(jid, {
             text:
               "╭━━━『 👑 KING SECURITY CORE 』\n" +
               "┃\n" +
@@ -1424,7 +1424,7 @@ Tetap menjaga sistem Creator.`
         const role = getSecurityRole(sender);
 
         if (role === "developer") {
-          await sock.sendMessage(jid, {
+          sock.sendMessage(jid, {
             text:
 `╭━━━『 👑 KING SECURITY CORE 』
 ┃
@@ -1447,7 +1447,7 @@ Tetap menjaga sistem Creator.`
 ╰━━━━━━━━━━━━`
           });
         } else {
-          await sock.sendMessage(jid, {
+          sock.sendMessage(jid, {
             text:
 `╭━━━『 👑 KING SECURITY CORE 』
 ┃
@@ -1468,7 +1468,7 @@ Tetap menjaga sistem Creator.`
         const query = text.trim().slice(6).trim();
 
         if (!query) {
-          await sock.sendMessage(jid, {
+          sock.sendMessage(jid, {
             text: "🎵 Contoh: !lagu alan walker"
           });
           await markCommandDone();
@@ -1481,7 +1481,7 @@ continue;
           console.log("DEBUG MUSIC: SEARCH SELESAI:", songs.length);
 
           if (!songs.length) {
-            await sock.sendMessage(jid, {
+            sock.sendMessage(jid, {
               text: `🎵 Tidak menemukan lagu untuk: "${query}"`
             });
             await markCommandDone();
@@ -1496,7 +1496,7 @@ continue;
           const spotifySearchUrl =
             `https://open.spotify.com/search/${encodeURIComponent(query)}`;
 
-          await sock.sendMessage(jid, {
+          sock.sendMessage(jid, {
             text:
               "╭━━━━━━━━━━━━━━━━━━━━━━╮\n" +
               "│   👑 KING BOT MUSIC  │\n" +
@@ -1520,7 +1520,7 @@ continue;
 
         } catch (error) {
           console.error("MUSIC ERROR:", error);
-          await sock.sendMessage(jid, {
+          sock.sendMessage(jid, {
             text: "❌ Gagal mencari lagu. Coba lagi nanti."
           });
         }
@@ -1576,7 +1576,7 @@ if (hasFeature("autoReason") && jid.endsWith("@g.us")) {
     const data = autoStatus.getStatus(person);
 
     if (data) {
-      await sock.sendMessage(jid, {
+      sock.sendMessage(jid, {
         text: `👑 ${data.name} sedang ${data.activity}.`
       });
       await markCommandDone();
@@ -1614,7 +1614,7 @@ continue;
             );
 
             if (!mentionedIsAdmin) {
-              await sock.sendMessage(jid, {
+              sock.sendMessage(jid, {
                 text: `╭━━━『 👑 KING BOT 』
 ┃
 ┃ ⚠️ Anggota ditemukan,
@@ -1658,7 +1658,7 @@ continue;
         const presenceData = getPresenceStatus(jid, targetJid);
 
         if (presenceData?.status === "away") {
-          await sock.sendMessage(jid, {
+          sock.sendMessage(jid, {
             text: `╭━━━『 👤 MEMBER STATUS 』
 ┃
 ┃ 👤 Nama:
@@ -1683,7 +1683,7 @@ continue;
           autoStatus.getStatus(targetJid);
 
         if (data) {
-          await sock.sendMessage(
+          sock.sendMessage(
             jid,
             {
               text: `👑 ${data.name} sedang ${data.activity}.`,
@@ -1792,7 +1792,7 @@ const askingAdmin =
               });
 
               if (targetExists && !targetIsAdmin) {
-                await sock.sendMessage(jid, {
+                sock.sendMessage(jid, {
                   text: `🔒 BASIC LIMIT\n\n${targetQuery} ditemukan sebagai anggota.\n\nPaket BASIC hanya dapat mencari admin grup.`
                 });
                 await markCommandDone();
@@ -1886,12 +1886,12 @@ const askingAdmin =
                     if (targetPresence?.status === "away") {
                       rememberPresenceSearch(jid, found.id, sender);
 
-                      await sock.sendMessage(jid, {
+                      sock.sendMessage(jid, {
                         text: `👤 *${found.name}*\n\n🟡 Status: Sedang ${targetPresence.reason || "pergi"}\n📝 Alasan: ${targetPresence.reason || "Tidak ada alasan"}\n⏰ Update: ${new Date(targetPresence.updatedAt).toLocaleString("id-ID")}`,
                         mentions: [found.id]
                       });
                     } else {
-                      await sock.sendMessage(jid, {
+                      sock.sendMessage(jid, {
                         text: `${found.name} sedang online.`,
                         mentions: [found.id]
                       });
@@ -1915,18 +1915,18 @@ const askingAdmin =
                         .map(x => `👤 @${x.id.split("@")[0]} — ${x.name}`)
                         .join("\n");
 
-                  await sock.sendMessage(jid, {
+                  sock.sendMessage(jid, {
                     text: resultText,
                     mentions
                   });
                 }
               } else {
-                await sock.sendMessage(jid, {
+                sock.sendMessage(jid, {
                   text: "❌ Orang yang dicari tidak ditemukan."
                 });
               }
             } else {
-              await sock.sendMessage(jid, {
+              sock.sendMessage(jid, {
                 text: askingAdmin
                   ? "❌ Tidak ada admin yang terdeteksi di grup."
                   : `❌ "${targetQuery}" tidak ditemukan di grup.`
@@ -1939,7 +1939,7 @@ const askingAdmin =
         } catch (error) {
           console.log("ERROR AUTO FIND:", error.message);
 
-          await sock.sendMessage(jid, {
+          sock.sendMessage(jid, {
             text: "⚠️ Gagal mencari anggota grup."
           });
 
@@ -1950,7 +1950,7 @@ const askingAdmin =
 
       if (hasFeature("botadmin") && text.trim().toLowerCase() === "!botadmin") {
         if (!jid.endsWith("@g.us")) {
-          await sock.sendMessage(jid, {
+          sock.sendMessage(jid, {
             text: "ℹ️ Perintah ini hanya bisa dipakai di grup."
           });
           await markCommandDone();
@@ -1980,7 +1980,7 @@ continue;
             (botParticipant.admin === "admin" ||
              botParticipant.admin === "superadmin");
 
-          await sock.sendMessage(jid, {
+          sock.sendMessage(jid, {
             text: botAdmin
               ? "👑 Bot adalah ADMIN grup."
               : "❌ Bot bukan ADMIN grup."
@@ -1988,7 +1988,7 @@ continue;
         } catch (error) {
           console.log("ERROR BOTADMIN:", error.message);
 
-          await sock.sendMessage(jid, {
+          sock.sendMessage(jid, {
             text: "⚠️ Gagal mengecek status admin bot."
           });
         }
@@ -2008,14 +2008,14 @@ if (hasFeature("antiLink") && groupInviteLink && jid.endsWith("@g.us")) {
   logActivity("GROUP_LINK", `${sender}: ${text}`);
 
   try {
-    await sock.sendMessage(jid, {
+    sock.sendMessage(jid, {
       delete: msg.key
     });
   } catch (error) {
     console.log("GAGAL HAPUS LINK GRUP:", error.message);
   }
 
-  await sock.sendMessage(jid, {
+  sock.sendMessage(jid, {
     text: "🚫 Link undangan grup WhatsApp tidak diperbolehkan."
   });
 
@@ -2043,7 +2043,7 @@ if (jid.endsWith("@g.us") && mentionedBot) {
       `${sender}: mention bot (${warnings[sender]}/5)`
     );
 
-    await sock.sendMessage(jid, {
+    sock.sendMessage(jid, {
       text:
         `⚠️ @${sender.split("@")[0]} jangan chat atau mention bot.\n` +
         `📛 Pelanggaran: ${warnings[sender]}/5`,
@@ -2091,14 +2091,14 @@ if (
   );
 
   try {
-    await sock.sendMessage(jid, {
+    sock.sendMessage(jid, {
       delete: msg.key
     });
   } catch (error) {
     console.log("GAGAL HAPUS TOXIC:", error.message);
   }
 
-  await sock.sendMessage(jid, {
+  sock.sendMessage(jid, {
     text:
       `⚠️ @${sender.split("@")[0]} melakukan pelanggaran kata kasar.\n` +
       `📛 Pelanggaran: ${warnings[sender]}/5`,
@@ -2116,7 +2116,7 @@ if (
           "remove"
         );
 
-        await sock.sendMessage(jid, {
+        sock.sendMessage(jid, {
           text:
             `🚫 @${sender.split("@")[0]} dikeluarkan karena mencapai 5 pelanggaran.`,
           mentions: [sender]
@@ -2124,14 +2124,14 @@ if (
 
         clearWarning(sender);
       } else {
-        await sock.sendMessage(jid, {
+        sock.sendMessage(jid, {
           text: "⚠️ Bot bukan admin, jadi tidak bisa mengeluarkan anggota."
         });
       }
     } catch (error) {
       console.log("GAGAL KICK:", error.message);
 
-      await sock.sendMessage(jid, {
+      sock.sendMessage(jid, {
         text: "⚠️ Gagal mengeluarkan anggota. Pastikan bot adalah admin grup."
       });
     }
@@ -2180,14 +2180,14 @@ if (
   );
 
   try {
-    await sock.sendMessage(jid, {
+    sock.sendMessage(jid, {
       delete: msg.key
     });
   } catch (error) {
     console.log("GAGAL HAPUS SPAM:", error.message);
   }
 
-  await sock.sendMessage(jid, {
+  sock.sendMessage(jid, {
     text:
       `🚨 @${sender.split("@")[0]} terdeteksi spam.\n` +
       `📛 Pelanggaran: ${warnings[sender]}/5`,
@@ -2205,7 +2205,7 @@ if (
           "remove"
         );
 
-        await sock.sendMessage(jid, {
+        sock.sendMessage(jid, {
           text:
             `🚫 @${sender.split("@")[0]} dikeluarkan karena mencapai 5 pelanggaran.`,
           mentions: [sender]
@@ -2213,14 +2213,14 @@ if (
 
         clearWarning(sender);
       } else {
-        await sock.sendMessage(jid, {
+        sock.sendMessage(jid, {
           text: "⚠️ Bot bukan admin, jadi tidak bisa mengeluarkan anggota."
         });
       }
     } catch (error) {
       console.log("GAGAL KICK:", error.message);
 
-      await sock.sendMessage(jid, {
+      sock.sendMessage(jid, {
         text: "⚠️ Gagal mengeluarkan anggota. Pastikan bot adalah admin grup."
       });
     }
@@ -2233,7 +2233,7 @@ if (
 
 /* OLD ADMIN FAQ DISABLED */
 if (hasFeature("stats") && text.trim().toLowerCase() === "!stats") {
-  await sock.sendMessage(jid, {
+  sock.sendMessage(jid, {
     text:
 `📊 KING BOT STATS
 
@@ -2250,7 +2250,7 @@ if (hasFeature("stats") && text.trim().toLowerCase() === "!stats") {
 }
 
 if (text.trim().toLowerCase() === "!owner") {
-  await sock.sendMessage(jid, {
+  sock.sendMessage(jid, {
     text: `╭━━━ 👑 KING BOT ━━━╮
 ┃     OWNER INFO     ┃
 ╰━━━━━━━━━━━━━━━━━━╯
@@ -2278,7 +2278,7 @@ if (text.trim().toLowerCase() === "!info") {
   const hours = Math.floor(uptime / 3600);
   const minutes = Math.floor((uptime % 3600) / 60);
 
-  await sock.sendMessage(jid, {
+  sock.sendMessage(jid, {
     text: `╭━━━ 🤖 KING BOT ━━━╮
 ┃      BOT INFO      ┃
 ╰━━━━━━━━━━━━━━━━━━╯
@@ -2298,7 +2298,7 @@ if (text.trim().toLowerCase() === "!info") {
 
 if (text.trim().toLowerCase() === "!rules") {
   if (!jid.endsWith("@g.us")) {
-    await sock.sendMessage(jid, {
+    sock.sendMessage(jid, {
       text: "⚠️ !rules hanya bisa digunakan di grup."
     });
     await markCommandDone();
@@ -2309,7 +2309,7 @@ continue;
     const metadata = await sock.groupMetadata(jid);
     const description = metadata.desc?.trim() || "Belum ada deskripsi grup.";
 
-    await sock.sendMessage(jid, {
+    sock.sendMessage(jid, {
       text: `╭━━━ 📜 GROUP RULES ━━━╮
 ┃       ${metadata.subject}
 ╰━━━━━━━━━━━━━━━━━━━━╯
@@ -2326,7 +2326,7 @@ Smart • Secure • Helpful`
     });
   } catch (error) {
     console.log("GAGAL AMBIL RULES:", error.message);
-    await sock.sendMessage(jid, {
+    sock.sendMessage(jid, {
       text: "⚠️ Gagal mengambil deskripsi grup."
     });
   }
@@ -2336,7 +2336,7 @@ Smart • Secure • Helpful`
 }
 
 if (text.trim().toLowerCase() === "!help") {
-  await sock.sendMessage(jid, {
+  sock.sendMessage(jid, {
     text:
 `╭━━━ 🤖 KING BOT ━━━╮
 ┃     PUSAT BANTUAN
@@ -2391,7 +2391,7 @@ Smart • Secure • Helpful`
 }
 
 if (hasFeature("log") && text.trim().toLowerCase() === "!log") {
-  await sock.sendMessage(jid, {
+  sock.sendMessage(jid, {
     text: activityLog.length
       ? "📋 ACTIVITY LOG\n\n" + activityLog.slice(-20).join("\n")
       : "📋 Activity Log masih kosong."
@@ -2405,7 +2405,7 @@ if (text.trim().toLowerCase() === "!ping") {
   console.log("DEBUG PING: MASUK HANDLER");
   console.log("DEBUG PING JID:", jid);
   console.log("DEBUG PING FROM:", msg.key.remoteJid);
-  const pingResult = await sock.sendMessage(jid, {
+  const pingResult = sock.sendMessage(jid, {
     text: "🏓 Pong!"
   });
   console.log("DEBUG PING RESULT:", JSON.stringify(pingResult, null, 2));
@@ -2415,7 +2415,7 @@ if (text.trim().toLowerCase() === "!ping") {
 }
 
 if (text.trim().toLowerCase() === "!status") {
-  await sock.sendMessage(jid, {
+  sock.sendMessage(jid, {
     text: "🟢 KING BOT ONLINE"
   });
   await markCommandDone();
@@ -2423,7 +2423,7 @@ if (text.trim().toLowerCase() === "!status") {
 }
 
 if (hasFeature("panel") && text.trim().toLowerCase() === "!config") {
-  await sock.sendMessage(jid, {
+  sock.sendMessage(jid, {
     text:
 `⚙️ CONFIG KING BOT
 
@@ -2441,14 +2441,14 @@ if (hasFeature("antiToxic") && text.trim().toLowerCase().startsWith("!toxic ")) 
   const name = text.trim().slice(7).trim();
 
   if (!name) {
-    await sock.sendMessage(jid, {
+    sock.sendMessage(jid, {
       text: "❌ Format: !toxic Nama"
     });
     await markCommandDone();
 continue;
   }
 
-  await sock.sendMessage(jid, {
+  sock.sendMessage(jid, {
     text: `⚠️ Peringatan toxic untuk ${name} dicatat.`
   });
 
@@ -2466,7 +2466,7 @@ if (hasFeature("reminder") && text.trim().toLowerCase().startsWith("!ingatkan ")
   const message = parts.join(" ");
 
   if (!/^\d{2}:\d{2}$/.test(time) || !message) {
-    await sock.sendMessage(jid, {
+    sock.sendMessage(jid, {
       text: "❌ Format: !ingatkan HH:MM Pesan"
     });
     await markCommandDone();
@@ -2495,7 +2495,7 @@ continue;
     JSON.stringify(reminders, null, 2)
   );
 
-  await sock.sendMessage(jid, {
+  sock.sendMessage(jid, {
     text: `⏰ Pengingat dibuat untuk ${time}`
   });
 
@@ -2516,7 +2516,7 @@ if (hasFeature("reminder") && text.trim().toLowerCase() === "!pengingat") {
   }
 
   if (reminders.length === 0) {
-    await sock.sendMessage(jid, {
+    sock.sendMessage(jid, {
       text: "📭 Tidak ada pengingat."
     });
     await markCommandDone();
@@ -2527,7 +2527,7 @@ continue;
     `${i + 1}. ⏰ ${r.time} — ${r.message}`
   ).join("\n");
 
-  await sock.sendMessage(jid, {
+  sock.sendMessage(jid, {
     text: "📋 DAFTAR PENGINGAT\n\n" + daftar
   });
 
@@ -2539,7 +2539,7 @@ if (hasFeature("reminder") && text.trim().toLowerCase().startsWith("!hapusingat 
   const admin = await isGroupAdmin(jid, sender);
 
   if (!admin) {
-    await sock.sendMessage(jid, {
+    sock.sendMessage(jid, {
       text: "🚫 Hanya ADMIN yang bisa menghapus pengingat."
     });
     await markCommandDone();
@@ -2566,7 +2566,7 @@ continue;
     id < 1 ||
     id > reminders.length
   ) {
-    await sock.sendMessage(jid, {
+    sock.sendMessage(jid, {
       text: "❌ ID pengingat tidak valid."
     });
     await markCommandDone();
@@ -2580,7 +2580,7 @@ continue;
     JSON.stringify(reminders, null, 2)
   );
 
-  await sock.sendMessage(jid, {
+  sock.sendMessage(jid, {
     text: `🗑️ Pengingat ${id} dihapus.`
   });
 
@@ -2597,7 +2597,7 @@ if (hasFeature("jam") && text.trim().toLowerCase().startsWith("!jam buka ")) {
   const hour = parseInt(text.trim().slice(10));
 
   if (isNaN(hour) || hour < 0 || hour > 23) {
-    await sock.sendMessage(jid, {
+    sock.sendMessage(jid, {
       text: "❌ Format: !jam buka HH"
     });
     await markCommandDone();
@@ -2606,7 +2606,7 @@ continue;
 
   openHour = hour;
 
-  await sock.sendMessage(jid, {
+  sock.sendMessage(jid, {
     text: `🕐 Jam buka diatur ke ${openHour}:00`
   });
 
@@ -2618,7 +2618,7 @@ if (hasFeature("jam") && text.trim().toLowerCase().startsWith("!jam tutup ")) {
   const hour = parseInt(text.trim().slice(11));
 
   if (isNaN(hour) || hour < 0 || hour > 23) {
-    await sock.sendMessage(jid, {
+    sock.sendMessage(jid, {
       text: "❌ Format: !jam tutup HH"
     });
     await markCommandDone();
@@ -2627,7 +2627,7 @@ continue;
 
   closeHour = hour;
 
-  await sock.sendMessage(jid, {
+  sock.sendMessage(jid, {
     text: `🌙 Jam tutup diatur ke ${closeHour}:00`
   });
 
@@ -2638,7 +2638,7 @@ continue;
 if (hasFeature("join") && text.trim().toLowerCase().startsWith("!join ")) {
   const name = text.trim().slice(6).trim();
 
-  await sock.sendMessage(jid, {
+  sock.sendMessage(jid, {
     text: name
       ? `👋 ${name} bergabung ke grup.`
       : "❌ Format: !join Nama"
@@ -2656,7 +2656,7 @@ if (hasFeature("join") && text.trim().toLowerCase().startsWith("!join ")) {
 if (hasFeature("leave") && text.trim().toLowerCase().startsWith("!leave ")) {
   const name = text.trim().slice(7).trim();
 
-  await sock.sendMessage(jid, {
+  sock.sendMessage(jid, {
     text: name
       ? `👋 ${name} keluar dari grup.`
       : "❌ Format: !leave Nama"
@@ -2671,7 +2671,7 @@ if (hasFeature("leave") && text.trim().toLowerCase().startsWith("!leave ")) {
 }
 
 if (text.trim().toLowerCase() === "!menu") {
-  await sock.sendMessage(jid, {
+  sock.sendMessage(jid, {
     text:
 `🤖 KING MARKET BOT
 
@@ -2694,14 +2694,14 @@ if (hasFeature("panel") && text.trim().toLowerCase() === "!panel") {
   const admin = await isGroupAdmin(jid, sender);
 
   if (!admin) {
-    await sock.sendMessage(jid, {
+    sock.sendMessage(jid, {
       text: "❌ Kamu bukan admin grup."
     });
     await markCommandDone();
 continue;
   }
 
-  await sock.sendMessage(jid, {
+  sock.sendMessage(jid, {
     text:
 `👑 KING BOT ADMIN PANEL
 
@@ -2718,7 +2718,7 @@ continue;
 }
 
 if (hasFeature("welcome") && text.trim().toLowerCase() === "!welcome on") {
-  await sock.sendMessage(jid, {
+  sock.sendMessage(jid, {
     text: "👋 Welcome: ON"
   });
   await markCommandDone();
@@ -2726,7 +2726,7 @@ if (hasFeature("welcome") && text.trim().toLowerCase() === "!welcome on") {
 }
 
 if (hasFeature("welcome") && text.trim().toLowerCase() === "!welcome off") {
-  await sock.sendMessage(jid, {
+  sock.sendMessage(jid, {
     text: "👋 Welcome: OFF"
   });
   await markCommandDone();
@@ -2734,44 +2734,44 @@ if (hasFeature("welcome") && text.trim().toLowerCase() === "!welcome off") {
 }
 
 if (hasFeature("antiLink") && text.trim().toLowerCase() === "!antilink on") {
-  await sock.sendMessage(jid, { text: "🔗 Anti-link: ON" });
+  sock.sendMessage(jid, { text: "🔗 Anti-link: ON" });
   await markCommandDone();
   continue;
 }
 
 if (hasFeature("antiLink") && text.trim().toLowerCase() === "!antilink off") {
-  await sock.sendMessage(jid, { text: "🔗 Anti-link: OFF" });
+  sock.sendMessage(jid, { text: "🔗 Anti-link: OFF" });
   await markCommandDone();
   continue;
 }
 
 if (hasFeature("antiToxic") && text.trim().toLowerCase() === "!antitoxic on") {
-  await sock.sendMessage(jid, { text: "🛡️ Anti-toxic: ON" });
+  sock.sendMessage(jid, { text: "🛡️ Anti-toxic: ON" });
   await markCommandDone();
   continue;
 }
 
 if (hasFeature("antiToxic") && text.trim().toLowerCase() === "!antitoxic off") {
-  await sock.sendMessage(jid, { text: "🛡️ Anti-toxic: OFF" });
+  sock.sendMessage(jid, { text: "🛡️ Anti-toxic: OFF" });
   await markCommandDone();
   continue;
 }
 
 if (hasFeature("antiSpam") && text.trim().toLowerCase() === "!antispam on") {
-  await sock.sendMessage(jid, { text: "🚫 Anti-spam: ON" });
+  sock.sendMessage(jid, { text: "🚫 Anti-spam: ON" });
   await markCommandDone();
   continue;
 }
 
 if (hasFeature("antiSpam") && text.trim().toLowerCase() === "!antispam off") {
-  await sock.sendMessage(jid, { text: "🚫 Anti-spam: OFF" });
+  sock.sendMessage(jid, { text: "🚫 Anti-spam: OFF" });
   await markCommandDone();
   continue;
 }
 
       if (text.trim().toLowerCase() === "!admin") {
         if (!jid.endsWith("@g.us")) {
-          await sock.sendMessage(jid, {
+          sock.sendMessage(jid, {
             text: "❌ Perintah ini hanya bisa digunakan di grup."
           });
           await markCommandDone();
@@ -2782,18 +2782,18 @@ continue;
           const admin = await isGroupAdmin(jid, sender);
 
           if (admin) {
-            await sock.sendMessage(jid, {
+            sock.sendMessage(jid, {
               text: "👑 Kamu terdeteksi sebagai ADMIN grup."
             });
           } else {
-            await sock.sendMessage(jid, {
+            sock.sendMessage(jid, {
               text: "👤 Kamu bukan admin grup."
             });
           }
         } catch (error) {
           console.log("ERROR ADMIN:", error.message);
 
-          await sock.sendMessage(jid, {
+          sock.sendMessage(jid, {
             text: "⚠️ Gagal membaca data admin grup."
           });
         }
@@ -2842,7 +2842,7 @@ sock.ev.on("group-participants.update", async (update) => {
         console.log("GAGAL AMBIL RULES WELCOME:", error.message);
       }
 
-      await sock.sendMessage(jid, {
+      sock.sendMessage(jid, {
         text: `👋 Halo @${participant.split("@")[0]}! 🥳
 Selamat datang di grup!
 
@@ -2872,7 +2872,7 @@ startBot();
 if (typeof command !== 'undefined') {
     if (command === 'devmenu' || command === 'dev' || command === 'developer') {
         if (!isDeveloper(sender)) {
-            await sock.sendMessage(from, { text: "⚠️ *Akses Ditolak!* Perintah ini hanya dapat diakses oleh Developer / Pencipta KING BOT (Fatih)." });
+            sock.sendMessage(from, { text: "⚠️ *Akses Ditolak!* Perintah ini hanya dapat diakses oleh Developer / Pencipta KING BOT (Fatih)." });
             return;
         }
         
@@ -2893,7 +2893,7 @@ if (typeof command !== 'undefined') {
 ` +
             `_Status Mode: Development & Protected_`;
             
-        await sock.sendMessage(from, { text: devText });
+        sock.sendMessage(from, { text: devText });
         return;
     }
 }
@@ -2905,7 +2905,7 @@ const { getCatalog } = require('./kingmarket.js');
 if (typeof command !== 'undefined') {
     if (command === 'kingmarket' || command === 'katalog' || command === 'market') {
         const textCatalog = getCatalog();
-        await sock.sendMessage(from, { text: textCatalog });
+        sock.sendMessage(from, { text: textCatalog });
         return;
     }
 }
