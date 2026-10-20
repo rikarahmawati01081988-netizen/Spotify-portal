@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spotify Premium — Access Portal</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        body { background-color: #121212; color: #ffffff; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
+        .container { background: #181818; padding: 40px; border-radius: 12px; width: 100%; max-width: 420px; box-shadow: 0 8px 24px rgba(0,0,0,0.5); text-align: center; border: 1px solid #282828; }
+        .logo { width: 48px; height: 48px; margin-bottom: 24px; fill: #1db954; }
+        h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+        p { color: #a7a7a7; font-size: 14px; margin-bottom: 24px; }
+        .input-group { margin-bottom: 16px; text-align: left; }
+        label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 8px; color: #a7a7a7; text-transform: uppercase; letter-spacing: 1px; }
+        input { width: 100%; padding: 12px 16px; background: #282828; border: 1px solid transparent; border-radius: 4px; color: #fff; font-size: 14px; outline: none; transition: border-color 0.2s; }
+        input:focus { border-color: #1db954; }
+        button { width: 100%; padding: 14px; background-color: #1db954; color: #000; border: none; border-radius: 30px; font-size: 14px; font-weight: 700; cursor: pointer; transition: transform 0.1s, background-color 0.2s; margin-top: 8px; }
+        button:hover { background-color: #1ed760; transform: scale(1.02); }
+        .result-box { display: none; margin-top: 20px; background: #222; padding: 16px; border-radius: 8px; border: 1px solid #333; text-align: left; }
+        .result-box input { background: #121212; margin-bottom: 10px; }
+        .copy-btn { background: #fff; color: #000; }
+        .copy-btn:hover { background: #eee; }
+        .spinner { display: none; width: 24px; height: 24px; border: 3px solid rgba(29, 185, 84, 0.3); border-top-color: #1db954; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 20px auto 0; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+<div class="container">
+    <svg class="logo" viewBox="0 0 24 24"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.6 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.599-.12-.42.18-.78.599-.9 4.5-1.02 8.4-5.999 11.581 1.02.36.24.48.66.24 1.02zm1.44-3.84c-.301.42-.84.6-1.26.3-3.24-1.98-8.16-2.58-11.94-1.44-.54.18-1.14-.12-1.32-.66-.18-.54.12-1.14.66-1.32 4.38-1.32 9.78-.66 13.62 1.68.42.3.6.84.24 1.44zm.12-4C14.88 7.32 8.64 7.14 5.04 8.22c-.66.18-1.38-.18-1.56-.84-.18-.66.18-1.38.84-1.56C8.76 4.56 15.84 4.8 19.98 7.32c.6.36.78 1.14.42 1.74-.36.6-1.14.78-1.74.42z"/></svg>
+    <h1>Spotify Premium</h1>
+    <p>Enter your account identifier to generate a secure session token link.</p>
+    <div id="form-section">
+        <div class="input-group">
+            <label for="username">Account ID / Email</label>
+            <input type="text" id="username" placeholder="user@example.com" required>
+        </div>
+        <button onclick="generateToken()">Generate Token</button>
+    </div>
+    <div class="spinner" id="spinner"></div>
+    <div class="result-box" id="resultBox">
+        <label>Generated Session Token Link</label>
+        <input type="text" id="tokenOutput" readonly>
+        <button class="copy-btn" onclick="copyToken()">Copy Link</button>
+    </div>
+</div>
+<script>
+    function generateToken() {
+        const username = document.getElementById('username').value;
+        if (!username) { alert('Please enter a valid identifier.'); return; }
+        document.getElementById('form-section').style.display = 'none';
+        document.getElementById('spinner').style.display = 'block';
+        setTimeout(() => {
+            document.getElementById('spinner').style.display = 'none';
+            const randomHash = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+            const tokenLink = `https://spotify.com/claim/token?session=${randomHash}&user=${encodeURIComponent(username)}`;
+            document.getElementById('tokenOutput').value = tokenLink;
+            document.getElementById('resultBox').style.display = 'block';
+        }, 1500);
+    }
+    function copyToken() {
+        const copyText = document.getElementById('tokenOutput');
+        copyText.select();
+        navigator.clipboard.writeText(copyText.value);
+        alert('Token link copied to clipboard.');
+    }
+</script>
+</body>
+</html>
