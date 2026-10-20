@@ -53,7 +53,11 @@
         setTimeout(() => {
             document.getElementById('spinner').style.display = 'none';
             const randomHash = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-            const tokenLink = `https://spotify.com/claim/token?session=${randomHash}&user=${encodeURIComponent(username)}`;
+            
+            // Mengarahkan ke halaman klaim lokal (claim.html)
+            const basePath = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
+            const tokenLink = `${basePath}claim.html?session=${randomHash}&user=${encodeURIComponent(username)}`;
+            
             document.getElementById('tokenOutput').value = tokenLink;
             document.getElementById('resultBox').style.display = 'block';
         }, 1500);
