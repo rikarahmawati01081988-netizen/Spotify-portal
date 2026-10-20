@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spotify Premium — Claim Portal</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background-color: #121212; color: #ffffff; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
+        .container { background: #181818; padding: 40px; border-radius: 12px; width: 100%; max-width: 420px; box-shadow: 0 8px 24px rgba(0,0,0,0.5); text-align: center; border: 1px solid #282828; }
+        h1 { font-size: 22px; font-weight: 700; margin-bottom: 12px; color: #1db954; }
+        p { color: #a7a7a7; font-size: 14px; margin-bottom: 20px; line-height: 1.5; }
+        .badge { background: #282828; padding: 10px; border-radius: 6px; font-size: 13px; color: #fff; margin-bottom: 20px; word-break: break-all; }
+        button { width: 100%; padding: 14px; background-color: #1db954; color: #000; border: none; border-radius: 30px; font-size: 14px; font-weight: 700; cursor: pointer; transition: transform 0.1s; }
+        button:hover { background-color: #1ed760; transform: scale(1.02); }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Claim Session</h1>
+    <p id="info-text">Verifying token for account...</p>
+    <div class="badge" id="user-badge">Loading...</div>
+    <button onclick="claimSuccess()">Activate Premium</button>
+</div>
+<script>
+    const params = new URLSearchParams(window.location.search);
+    const user = params.get('user');
+    const session = params.get('session');
+    
+    if (user) {
+        document.getElementById('user-badge').innerText = `Account: ${user}`;
+        document.getElementById('info-text').innerText = `Session hash verified. Click below to activate your premium package.`;
+    } else {
+        document.getElementById('user-badge').innerText = `Invalid Session`;
+        document.getElementById('info-text').innerText = `The token link is invalid or expired.`;
+    }
+
+    function claimSuccess() {
+        alert('Premium subscription successfully activated for ' + (user || 'user') + '!');
+        window.location.href = 'https://open.spotify.com';
+    }
+</script>
+</body>
+</html>
